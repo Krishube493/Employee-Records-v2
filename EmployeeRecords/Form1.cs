@@ -17,6 +17,7 @@ namespace EmployeeRecords
         public mainForm()
         {
             InitializeComponent();
+            loadDB();
         }
 
         private void addButton_Click(object sender, EventArgs e)
@@ -32,7 +33,19 @@ namespace EmployeeRecords
 
         private void removeButton_Click(object sender, EventArgs e)
         {
-           
+            foreach (Employee emp in employeeDB)
+            {
+                if (emp.id == idInput.Text)
+                {
+                    employeeDB.Remove(emp);
+                    ClearLabels();
+                    outputLabel.Text = "Employee Removed";
+                    return;
+                }
+
+                outputLabel.Text = "Employee Not Found";
+                ClearLabels();
+            }
         }
 
         private void listButton_Click(object sender, EventArgs e)
@@ -56,28 +69,60 @@ namespace EmployeeRecords
 
         private void mainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-
+            saveDB();
         }
 
         public void loadDB()
         {
-            
+            string newID, newFN, newLN, newDate, newSalary;
+            XmlReader reader = XmlReader.Create("Resources.Employee.xml", null);
+
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Text)
+                {
+                    newID = reader.ReadString();
+
+                    reader.ReadToNextSibling("firstName");
+                    newFN = reader.ReadString();
+
+                    reader.ReadToNextSibling("lastName");
+                    newLN = reader.ReadString();
+
+                    reader.ReadToNextSibling("startDate");
+                    newDate = reader.ReadString();
+
+                    reader.ReadToNextSibling("salary");
+                    newSalary = reader.ReadString();
+
+                    Employee emp = new Employee(newID, newFN, newLN, newDate, newSalary);
+                    employeeDB.Add(emp);
+                }
+            }
+
+            reader.Close();
         }
 
         public void saveDB()
         {
-            XmlWriter writer = XmlWriter.Create("Resources/EmployeeData.xml", null);
+            XmlWriter writer = XmlWriter.Create("Resources.Employee.xml", null);
 
-            writer.WriteStartElement("Employee");
+            writer.WriteStartElement("Employees");
 
             foreach (Employee emp in employeeDB)
             {
+                writer.WriteStartElement("Employeee");
                 writer.WriteElementString("id", emp.id);
                 writer.WriteElementString("firstName", emp.firstName);
                 writer.WriteElementString("lastName", emp.lastName);
                 writer.WriteElementString("startDate", emp.date);
                 writer.WriteElementString("salary", emp.salary);
+
+                writer.WriteEndElement();
             }
+
+            writer.WriteEndElement();
+            writer.Close();
         }
     }
 }

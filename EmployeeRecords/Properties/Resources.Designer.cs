@@ -64,9 +64,9 @@ namespace EmployeeRecords.Properties {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///.
         /// </summary>
-        internal static string EmployeeData {
+        internal static string Employee {
             get {
-                return ResourceManager.GetString("EmployeeData", resourceCulture);
+                return ResourceManager.GetString("Employee", resourceCulture);
             }
         }
     }
